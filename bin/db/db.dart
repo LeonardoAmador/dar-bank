@@ -1,3 +1,3 @@
 import '../models/account.dart';
 
-final Map<String, Account> database = {};
+final Map<int, Account> database = {};

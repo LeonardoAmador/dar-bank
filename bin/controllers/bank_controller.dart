@@ -1,29 +1,53 @@
 import '../db/db.dart';
+import '../handlers/transfer_exception.dart';
+import '../handlers/unauthorized_account_exception.dart';
 import '../models/account.dart';
 
 class BankController {
-  void addAccount({ required String id, required Account account }) {
-    database[id] = account;
+  static int _accountNumber = 0;
+
+  int _generateAccountNumber(Account account) {
+    if (!account.isAuthenticated) {
+      throw UnauthorizedAccountException('You must authenticate your account!');
+    } else {
+      return ++_accountNumber;
+    }
+  }
+
+  void addAccount({required Account account}) {
+    try {
+      final int generatedAccountNumber = _generateAccountNumber(account);
+      database[generatedAccountNumber] = account;
+      print('Account added successfully with account number: $generatedAccountNumber');
+    } catch (e) {
+      print('Error adding account: $e');
+    }
   }
 
   bool makeTransfer({ required String idSender, required String idReceiver, required double amount }) {
-    if (!verifyId(idSender) || !verifyId(idReceiver)) {
+      try {
+        if (!verifyId(idSender) || !verifyId(idReceiver)) {
+          throw TransferException('Invalid sender or receiver ID');
+        }
+
+        final Account accountSender = database[idSender]!;
+        final Account accountReceiver = database[idReceiver]!;
+
+        _transferFunds(accountSender, accountReceiver, amount);
+        return true;
+    } catch (e) {
+      print('Transfer failed: $e');
       return false;
     }
-
-    final Account accountSender = database[idSender]!;
-    final Account accountReceiver = database[idReceiver]!;
-
-    return transferFunds(accountSender, accountReceiver, amount);
   }
 
   bool verifyId(String id) {
     return database.containsKey(id);
   }
 
-  bool transferFunds(Account sender, Account receiver, double amount) {
+  bool _transferFunds(Account sender, Account receiver, double amount) {
     if (!sender.isAuthenticated || sender.balance < amount) {
-      return false;
+      throw TransferException('Insufficient funds or authentication failed');
     }
 
     sender.balance -= amount;
