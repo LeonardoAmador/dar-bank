@@ -11,7 +11,7 @@ class BankController {
       throw UnauthorizedAccountException('You must authenticate your account!');
     } else {
       final int generatedAccountNumber = ++_accountNumber;
-      account.setAccountNumber(generatedAccountNumber);
+      account.accountNumber = generatedAccountNumber;
 
       return generatedAccountNumber;
     }
@@ -43,9 +43,7 @@ class BankController {
     }
   }
 
-  bool verifyId(String id) {
-    return database.containsKey(id);
-  }
+  bool verifyId(String id) => database.containsKey(id);
 
   bool _transferFunds(Account sender, Account receiver, double amount) {
     if (!sender.isAuthenticated || sender.balance < amount) {

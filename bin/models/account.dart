@@ -1,33 +1,56 @@
 import 'package:uuid/uuid.dart';
 import '../db/db.dart';
+
 class Account {
-  String uid;
-  String name;
-  double balance;
-  bool isAuthenticated;
-  int accountNumber;
+  final String _uid;
+  late int _accountNumber;
+  String _name;
+  double _balance;
+  bool _isAuthenticated;
 
   Account({
-    required this.name,
-    required this.balance,
-    this.isAuthenticated = false,
-  }) : uid = Uuid().v4(), accountNumber = -1 {
+    required String name,
+    required double balance,
+    bool isAuthenticated = false,
+  })  : _uid = Uuid().v4(),
+        _accountNumber = -1,
+        _name = name,
+        _balance = balance,
+        _isAuthenticated = isAuthenticated {
     addToDatabase();
   }
 
-  void editBalance({required double value}) {
-    balance += value;
+  String get uid => _uid;
+
+  int get accountNumber => _accountNumber;
+
+  void set accountNumber(int newNumber) {
+    _accountNumber = newNumber;
   }
 
-  void setAccountNumber(int number) {
-    accountNumber = number;
+  String get name => _name;
+
+  void set name(String newName) {
+    _name = newName;
+  }
+
+  double get balance => _balance;
+
+  void set balance(double newBalance) {
+    _balance = newBalance;
+  }
+
+  bool get isAuthenticated => _isAuthenticated;
+
+  void set isAuthenticated(bool newCondition) {
+    _isAuthenticated = newCondition;
   }
 
   void addToDatabase() {
-    if (!database.containsKey(uid)) {
-      database[uid] = this;
+    if (!database.containsKey(_uid)) {
+      database[_uid] = this;
     } else {
-      print('Account with UID $uid already exists in the database.');
+      print('Account with UID $_uid already exists in the database.');
     }
   }
 }
