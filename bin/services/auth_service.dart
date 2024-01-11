@@ -9,6 +9,7 @@ class AuthService {
   bool authenticateAccount(String accountId) {
     try {
       if (!_accountExists(accountId)) {
+        print('Account doesn\'t exists.');
         return false;
       }
 

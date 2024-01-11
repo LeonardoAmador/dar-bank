@@ -10,14 +10,16 @@ class BankController {
     if (!account.isAuthenticated) {
       throw UnauthorizedAccountException('You must authenticate your account!');
     } else {
-      return ++_accountNumber;
+      final int generatedAccountNumber = ++_accountNumber;
+      account.setAccountNumber(generatedAccountNumber);
+
+      return generatedAccountNumber;
     }
   }
 
   void addAccount({required Account account}) {
     try {
       final int generatedAccountNumber = _generateAccountNumber(account);
-      database[generatedAccountNumber] = account;
       print('Account added successfully with account number: $generatedAccountNumber');
     } catch (e) {
       print('Error adding account: $e');
