@@ -28,7 +28,7 @@ class BankController {
 
   bool makeTransfer({ required String idSender, required String idReceiver, required double amount }) {
       try {
-        if (!verifyId(idSender) || !verifyId(idReceiver)) {
+        if (!_verifyId(idSender) || !_verifyId(idReceiver)) {
           throw TransferException('Invalid sender or receiver ID');
         }
 
@@ -43,7 +43,7 @@ class BankController {
     }
   }
 
-  bool verifyId(String id) => database.containsKey(id);
+  bool _verifyId(String id) => database.containsKey(id);
 
   bool _transferFunds(Account sender, Account receiver, double amount) {
     if (!sender.isAuthenticated || sender.balance < amount) {
